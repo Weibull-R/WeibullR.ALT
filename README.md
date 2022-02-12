@@ -1,1 +1,4 @@
-# WeibullR.ALT
+WeibullR.ALT
+============
+
+Accellerated Life Testing Using WeibullR
