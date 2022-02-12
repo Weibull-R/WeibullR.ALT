@@ -1,0 +1,12 @@
+export(
+alt.data,
+alt.make,
+alt.parallel,
+alt.fit,
+options.alt,
+plot.alt,
+view_dist_fits
+)
+
+
+S3method(plot, alt) 

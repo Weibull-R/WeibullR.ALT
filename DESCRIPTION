@@ -1,0 +1,13 @@
+Package: WeibullR.ALT
+Type: Package
+Title: Accellerated Life Testing Using WeibullR
+Version: 0.3
+License: GPL (>= 3)
+Date: 2022-2-12
+Author: David J. Silkworth
+Maintainer: Jacob T. Ormerod <jake@openreliability.org>
+Depends: WeibullR
+Description: Graphical Analysis of Accellerated Life Testing Data
+URL: http://www.openreliability.org/weibull-r-weibull-analysis-on-r/
+LazyLoad: yes 
+LazyData: yes             
