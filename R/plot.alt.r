@@ -175,7 +175,13 @@ findrange<-function(alt)  {
 		}	
 		if(!is.null(alt$goal)) {	
 			allstress<-c(allstress, alt$goal$stress)
-		}	
+		}
+		zero_positions<-which(alltimes==0)	
+		if(length(zero_positions>0)) {	
+			alltimes<-alltimes[-which(alltimes==0)]
+			alltimes<-c(alltimes, min(alltimes)/2)
+		}
+		
 	}		
 			
 	if(!is.null(alltimes)){		
@@ -202,18 +208,33 @@ points2plot<-function(x, jf=.001)  {
 	stress<-NULL			
 	time<-NULL			
 	for(set in 1:length(x$data) )  {			
-		for(li in 1:nrow(x$data[[set]]$data))  {		
-		## an additional condition can be set here		
-		## such that x$data[[set]]$data$left[li] == x$data[[set]]$data$right[li]		
-		## or x$data[[set]]$data$right[li] == -1		
-			if(x$data[[set]]$data$qty[li] ==1)  {	
-				time<-c(time, x$data[[set]]$data$left[li])
-				stress<-c(stress, x$data[[set]]$stress)
-			}else{	
-				time<-c(time, rep(x$data[[set]]$data$left[li], x$data[[set]]$data$qty[li]))
-				stress<-c(stress, qjitter(x$data[[set]]$stress,  x$data[[set]]$data$qty[li], jf))
-			}	
-		}		
+		for(li in 1:nrow(x$data[[set]]$data))  {				
+			if(x$data[[set]]$data$qty[li] ==1)  {			
+				## excluding suspensions		
+				if(  x$data[[set]]$data$right[li] - x$data[[set]]$data$left[li] > 0 )  {		
+					time<-c(time, (x$data[[set]]$data$left[li] + x$data[[set]]$data$right[li])/2)	
+					stress<-c(stress, x$data[[set]]$stress)	
+				}		
+				if(  x$data[[set]]$data$right[li] - x$data[[set]]$data$left[li] == 0 )  {		
+					time<-c(time, x$data[[set]]$data$left[li])	
+					stress<-c(stress, x$data[[set]]$stress)	
+				}		
+						
+			}			
+			# excluding lines with zero qty			
+			if(x$data[[set]]$data$qty[li] >1)  {			
+				## excluding suspensions		
+				if(  x$data[[set]]$data$right[li] - x$data[[set]]$data$left[li] > 0 )  {		
+					time<-c(time, rep((x$data[[set]]$data$left[li] + x$data[[set]]$data$right[li])/2, x$data[[set]]$data$qty[li]))	
+					stress<-c(stress, qjitter(x$data[[set]]$stress,  x$data[[set]]$data$qty[li], jf))	
+				}		
+				if(  x$data[[set]]$data$right[li] - x$data[[set]]$data$left[li] == 0 )  {		
+					time<-c(time, rep(x$data[[set]]$data$left[li], x$data[[set]]$data$qty[li]))	
+					stress<-c(stress, qjitter(x$data[[set]]$stress,  x$data[[set]]$data$qty[li], jf))	
+				}		
+						
+			}			
+		}
 	}			
 	p2p<-data.frame(time, stress)			
 	p2p 			
