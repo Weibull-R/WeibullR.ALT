@@ -26,9 +26,25 @@ alt.parallel<-function(x, method.fit="lslr", ignore_slope=0, set.exponential=FAL
 	colors<-c("blue", "darkgreen", "red", "purple", "darkseagreen", "chocolate",  "lightblue4", "indianred")
 
 		for(set in 1:length(x$data))  {
-			if(method.fit=="mle")  {
-				 this_fit<-mlefit(x$data[[set]]$data, dist=x$dist)
-			}
+	## need to test for <3 failures in this data set and then handle 1 or 2 failure points separately				
+		Ns<-0			
+		Nf<-0			
+		for(row in 1:nrow(x$data[[set]]$data))  {			
+			if(x$data[[set]]$data$right[row]>0) Nf<-Nf+x$data[[set]]$data$qty[row]		
+		}			
+		if(Nf <3)  {			
+			if(!set  %in% ignore_slope) ignore_slope<-c(ignore_slope, set)		
+			if(Nf==1) {		
+				if(x$dist=="lognormal") this_fit<-c(log(max(x$data[[set]]$data$right)), 1.0)	
+				if(x$dist=="weibull") this_fit<-c(max(x$data[[set]]$data$right) ,1.0)	
+			}		
+			if(Nf==2) {		
+				## perhaps there is  a slope to calculate and potentially include	
+				if(x$dist=="lognormal") this_fit<-c(log((sum(x$data[[set]]$data$right)+Ns)/2), 1.0)	
+				if(x$dist=="weibull") this_fit<-c((sum(x$data[[set]]$data$right)+Ns)/2 ,1.0)	
+			}		
+		}else{  ## the rest of the fit			
+
 			if(method.fit=="lslr" || view_parallel_fits==TRUE)  {
 		## extract fail and suspension data from the lrq dataframe
 				fa<-NULL
@@ -78,7 +94,12 @@ alt.parallel<-function(x, method.fit="lslr", ignore_slope=0, set.exponential=FAL
 				wblr_list[[set]]<-wblr_obj
 
 			}
-
+			
+			if(method.fit=="mle")  {
+				 this_fit<-mlefit(x$data[[set]]$data, dist=x$dist)
+			}
+	}  # close the >2 failure else block
+		
 			fit_list[[length(fit_list)+1]]<-
 			unname(this_fit)
 
