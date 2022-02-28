@@ -170,29 +170,33 @@ if(!is.null(x$alt_coef)) {
 		le<-c(le, paste0( "percentile ",high_percentiles[percent]))	
 		col<-c(col,"blue")	
 		lty<-c(lty, 1)	
-		lwd<-c(lwd,2)	
+		lwd<-c(lwd,2)
+		cex<-c(cex, .8)
 	}		
 	if(x$dist == "weibull") {		
 		le<-c(le, "percentile 63.2")	
 		col<-c(col,"red")	
 		lty<-c(lty, 1)	
-		lwd<-c(lwd,2)	
+		lwd<-c(lwd,2)
+		cex<-c(cex, .8)	
 	}		
 	if(x$dist == "lognormal") {		
 		le<-c(le, " percentile 50")	
 		col<-c(col,"red")	
 		lty<-c(lty, 1)	
-		lwd<-c(lwd,2)	
+		lwd<-c(lwd,2)
+		cex<-c(cex, .8)
 	}		
 	for(percent in 1:length(low_percentiles)) {		
 		le<-c(le, paste0( "percentile ",low_percentiles[percent]))	
 		col<-c(col,"blue")	
 		lty<-c(lty, 1)	
-		lwd<-c(lwd,2)	
+		lwd<-c(lwd,2)
+		cex<-c(cex, .8)	
 	}		
 			
 	legend("topright", inset=0.05, legend=le,		
-	       col=col, lty=lty, lwd=lwd, bg="white")		
+	       col=col, lty=lty, lwd=lwd, cex=cex, bg="white")		
 		
 	} #Close is.plot,percentiles			
 
