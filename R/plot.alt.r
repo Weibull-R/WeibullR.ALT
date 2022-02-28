@@ -30,7 +30,7 @@ plot.alt <- function(x,...){
     # | unlike plot.wblr this fumction        |
     # | will only address a single alt object |
     # +---------------------------------------+
-##    if(!identical(class(x),"alt")) stop ("x must be an alt object")
+    if(!identical(class(x),"alt")) stop ("x must be an alt object")
 
     # +------------------------------------+
     # |  create default options arguments  |
@@ -139,15 +139,63 @@ if(!is.null(x$alt_coef)) {
 			 col=opa$fit.col)			
 	}					
 						
-	if(opa$is.plot.percentiles==TRUE)  {
-		for(percentile in 1:length(x$percentiles))  {
-			yvec<-exp(log(y) + x$log_offsets[percentile])			
-			points(xlim, yvec, type="l", 			
-				lty=opa$percentile.lty,		
-				lwd=opa$percentile.lwd,		
-				col=opa$percentile.col)		
-		}					
-	} #Close is.plot,percentiles
+	if(opa$is.plot.percentiles==TRUE)  {			
+			## log offsets for the percentiles are simply based on the parallelP2	
+			## which is always stored in the alt object as parallel_par[1]	
+			if(x$dist=="lognormal")  {	
+				quants<-qlnorm(opa$percentiles/100, 0, x$parallel_par$P2[1])
+			}	
+			if(x$dist=="weibull")  {	
+				quants<-qweibull(opa$percentiles/100, x$parallel_par$P2[1], 1)
+			}	
+			log_offsets<-log(quants)	
+				
+		for(percentile in 1:length(opa$percentiles))  {		
+			yvec<-exp(log(y) + log_offsets[percentile])	
+			points(xlim, yvec, type="l", 	
+				lty=opa$percentile.lty,
+				lwd=opa$percentile.lwd,
+				col=opa$percentile.col)
+		}
+
+	le<-NULL; col<-NULL; lty<-NULL; cex<-NULL; lwd<-NULL		
+			
+	#sort percentiles decreasing		
+	percentiles<-sort(opa$percentiles, decreasing=TRUE)		
+	high_percentiles<-percentiles[which(percentiles>50)]	
+	low_percentiles<-percentiles[which(percentiles<50)]		
+			
+			
+	for(percent in 1:length(high_percentiles)) {		
+		le<-c(le, paste0( "percentile ",high_percentiles[percent]))	
+		col<-c(col,"blue")	
+		lty<-c(lty, 1)	
+		lwd<-c(lwd,2)	
+	}		
+	if(x$dist == "weibull") {		
+		le<-c(le, "percentile 63.2")	
+		col<-c(col,"red")	
+		lty<-c(lty, 1)	
+		lwd<-c(lwd,2)	
+	}		
+	if(x$dist == "lognormal") {		
+		le<-c(le, " percentile 50")	
+		col<-c(col,"red")	
+		lty<-c(lty, 1)	
+		lwd<-c(lwd,2)	
+	}		
+	for(percent in 1:length(low_percentiles)) {		
+		le<-c(le, paste0( "percentile ",low_percentiles[percent]))	
+		col<-c(col,"blue")	
+		lty<-c(lty, 1)	
+		lwd<-c(lwd,2)	
+	}		
+			
+	legend("topright", inset=0.05, legend=le,		
+	       col=col, lty=lty, lwd=lwd, bg="white")		
+		
+	} #Close is.plot,percentiles			
+
 
 } #close fit test
 } #close parallel test

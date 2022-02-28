@@ -80,7 +80,7 @@ options.alt<- function(...){
 		goal.lwd=2,
 		
 		
-		#percentiles = c(10,90), ## percentiles are now an arguement to alt.fit
+		percentiles = c(10,90), ## percentiles are no longer an arguement to alt.fit
 		is.plot.percentiles=TRUE,
 		percentile.col="blue",
 		percentile.lty="solid",

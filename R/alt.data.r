@@ -40,7 +40,7 @@ alt.data<-function(x, s=NULL, interval=NULL, stress) {
 		}				
 	} #close dataframe test					
 						
-	if(is.null(x) && is.null(interval) $$ !is.null(s) )  {					
+	if(is.null(x) && is.null(interval) && !is.null(s) )  {					
 		all_suspensions<-TRUE				
 		lrq<-data.frame(left=s, right=-1, qty=1)				
 	}					
