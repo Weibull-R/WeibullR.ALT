@@ -8,7 +8,7 @@
     This function generates life test data tables suitable for use in example scripts.
 }
 \usage{
-	NelsonDaata(x)
+	NelsonData(x)
 }
 
 \arguments{
@@ -22,7 +22,7 @@
  This method of data provision has been found necessary since inclusion of table3.1 and table5.1
  created a problem with a "Warning: object '.Random.seed' is created by more than one data call"
  which prevented lazyData=yes to be in the package definition.  Without lazyData I could never seem
- to make \data files avialable to example scripts within the package.
+ to make data files avialable to example scripts within the package.
  
  Table 2.2 is presented on page115 of Wayne Nelson's book "Accelerated Testing".
  It purports to represent a series tests on  a Class H insulation at elevated temperatures (in deg C)
