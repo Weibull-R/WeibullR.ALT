@@ -1,13 +1,14 @@
 Package: WeibullR.ALT
 Type: Package
 Title: Accellerated Life Testing Using WeibullR
-Version: 0.5.6
+Version: 0.5.7
+Description: Graphical data analysis of accelerated life tests. Methods derived from Wayne Nelson (1990, ISBN: 0471522775) <DOI:10.1002/9780470316795>, William Q. Meeker and  Lois A. Escobar (1998, ISBN: 1-471-14328-6), John I. McCool, (2012, ISBN: 9781118217986) <DOI:10.1002/9781118351994>.
 License: GPL (>= 3)
-Date: 2022-2-28
+Date: 2022-3-2
 Author: David J. Silkworth
 Maintainer: Jacob T. Ormerod <jake@openreliability.org>
-Depends: WeibullR
+Depends: R (>= 3.5.0), WeibullR
 Description: Graphical Analysis of Accellerated Life Testing Data
 URL: http://www.openreliability.org/weibull-r-weibull-analysis-on-r/
-LazyLoad: yes 
-LazyData: yes             
+LazyLoad: yes
+LazyData: yes            
