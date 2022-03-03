@@ -105,10 +105,14 @@ view_dist_fits<-function(x)  {
 				interval<-data.frame(left=le, right=ri)				
 			}					
 								
-			wblr_obj<-wblr(x=fa, s=su, interval=interval, dist=x$dist, canvas=x$dist, col=colors[set])					
-#browser()					
-			wblr_obj<-wblr.fit(wblr_obj, method.fit=x$method.fit)				
-					
+			wblr_obj<-wblr(x=fa, s=su, interval=interval, dist=x$dist, canvas=x$dist, col=colors[set])
+			
+			if(x$method.fit=="lslr") {
+				wblr_obj<-wblr.fit(wblr_obj, method.fit="rr-xony")	
+			}else{
+				wblr_obj<-wblr.fit(wblr_obj, mbethod.fit=x$method.fit)				
+			}
+			
 			wblr_list[[set]]<-wblr_obj					
 		}else{						
 			ignore_slope<-c(ignore_slope, set)					

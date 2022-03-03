@@ -13,7 +13,7 @@ alt.fit<-function(x, omit_set=0)  {
 	P1vec<-NULL		
 	stressvec<-NULL		
 	#expand modelDF accordint to wt		
-	for(row in 1:length(modelDF))  {		
+	for(row in 1:nrow(modelDF))  {		
 		if(modelDF$wt[row]>0) {	
 		P1vec<-c(P1vec, rep(modelDF$P1[row], modelDF$wt[row]))	
 		stressvec<-c(stressvec, rep(modelDF$stress[row], modelDF$wt[row]))	
