@@ -20,8 +20,11 @@ alt.fit<-function(x, omit_set=0)  {
 		}	
 	}		
 			
-	if(x$alt.model=="arrhenius")  fit<-lm(P1vec ~ stressvec)		
-	if(x$alt.model=="power")  fit<-lm(log(P1vec) ~ log(stressvec))		
+	if(x$dist == "lognormal") Tvec<-P1vec
+	if(x$dist == "weibull") Tvec<-log(P1vec)
+	if(x$alt.model=="arrhenius")  fit<-lm(Tvec ~ stressvec)
+	if(x$alt.model=="power")  fit<-lm(Tvec ~ log(stressvec))
+
 		
 	x$alt_coef<-unname(fit$coefficients)		
 	# now alt models can plot a fitted line at the percentile of the distribution parameter P1
