@@ -60,7 +60,7 @@ alt.data<-function(x, s=NULL, interval=NULL, stress) {
 		}				
 						
 	}else{					
-		lrq<-mleframe(x,s, interval)				
+		lrq<-mleframe.alt(x,s, interval)				
 	}					
 						
 	obj<-list(stress = stress, data = lrq)					
