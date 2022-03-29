@@ -5,6 +5,7 @@ alt.parallel,
 alt.fit,
 options.alt,
 plot.alt,
+mleframe.alt,
 NelsonData
 )
 
