@@ -110,7 +110,7 @@ view_dist_fits<-function(x)  {
 			if(x$method.fit=="lslr") {
 				wblr_obj<-wblr.fit(wblr_obj, method.fit="rr-xony")	
 			}else{
-				wblr_obj<-wblr.fit(wblr_obj, mbethod.fit=x$method.fit)				
+				wblr_obj<-wblr.fit(wblr_obj, method.fit=x$method.fit)				
 			}
 			
 			wblr_list[[set]]<-wblr_obj					
