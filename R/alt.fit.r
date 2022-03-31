@@ -19,7 +19,7 @@ alt.fit<-function(x, omit_set=0)  {
 		stressvec<-c(stressvec, rep(modelDF$stress[row], modelDF$wt[row]))	
 		}	
 	}		
-			
+	## fixes attributed to debug of LuValle example
 	if(x$dist == "lognormal") Tvec<-P1vec
 	if(x$dist == "weibull") Tvec<-log(P1vec)
 	if(x$alt.model=="arrhenius")  fit<-lm(Tvec ~ stressvec)

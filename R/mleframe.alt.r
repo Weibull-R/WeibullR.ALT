@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 mleframe.alt<-function(x, s=NULL, interval=NULL)  {		
 		
 		retx<-evaluate_x_arg(x)
@@ -14,26 +14,177 @@ mleframe.alt<-function(x, s=NULL, interval=NULL)  {
 		row.names(ret)<-seq(1:nrow(ret))
 	ret	
 }		
-=======
-# mleframe.alt.R
-# loaded from preparatory package abremDebias originally written by David J Silkworth
-# copyright (c) OpenReliability.org 2014-2022
-#-------------------------------------------------------------------------------
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
-#
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
 
-mleframe.alt<-function(x, s=NULL, interval=NULL)  {
+evaluate_x_arg<-function(x)  {								
+	ret<-NULL
+	failures<-NULL		
+	suspensions<-NULL							
+	if(!is.null(x))  {							
+	## here a time-event dataframe can be evaluated, if provided as x							
+	## This is the support for a time-event dataframe							
+		if (is(x, "data.frame")) {						
+			if(is.null(x$time) || is.null(x$event)){					
+				stop(': Argument \"x\" is missing $time and/or ","$event columns...')				
+			}					
+	## verify positive time values							
+			if (anyNA(x$time)) {					
+				stop("NA in failure or suspension data")				
+			}					
+			if (any(x$time<= 0)) {					
+				stop("non-positive values in failure or suspension data")				
+			}					
+	## verify 1's or 0's only in event							
+	## using Jurgen's validation code modified now for possibility of suspensions only in x							
+			event_column_ok=FALSE					
+			ev_info <- levels(factor(x$event))					
+			if(identical(ev_info,c("0","1")) || identical(ev_info,"1") || identical(ev_info,"0")){					
+				event_column_ok=TRUE				
+			}					
+			if(!event_column_ok) {					
+				stop("event column contains other than '1' or '0' ")				
+			}					
+								
+	## Let's be sure the qty field, if present, is all integer, else future havoc could ensue							
+			if(!is.null(x$qty)) {					
+				if(any(!is.integer(x$qty))) x$qty<-ceiling(x$qty)
+	## eliminate any rows with non-positive qty				
+				drop_rows<-which(x$qty<=0)	
+				if(length(drop_rows)>0) { 
+					x<-x[-drop_rows,]	
+					warning("non-positive qty data eliminated")
+				}
+			}					
+								
+##  test that exact failures indeed exist								
+			if("1" %in% ev_info) {					
+				if(is.null(x$qty)) {				
+					fail_vec<-x$time[x$event==1]			
+					fdf<-as.data.frame(table(fail_vec))			
+					ft<-as.numeric(levels(fdf[,1]))			
+					fq<-fdf[,2]			
+					failures<-data.frame(left=ft, right=ft, qty=fq)			
+				}else{				
+					f<-x$time[x$event==1]			
+					failures <- data.frame(left = f, right = f, qty = x$qty[x$event==1])			
+			# sort failure data according to default decreasing=FALSE					
+					NDX<-order(failures$left)				
+					failures<-failures[NDX,]			
+			## Cannot assume that data input with a qty field is appropriately  consolidated					
+					if(length(unique(failures$left)) !=  nrow(failures)) {			
+						drop_rows<-NULL		
+						for(frow in nrow(failures): 2)  {		
+							if(failures[frow,1] == failures[frow-1,1]) {	
+								drop_rows<-c(drop_rows, frow)
+								failures[frow-1,3] <- failures[frow-1,3] + failures[frow,3]
+							}	
+						}		
+						failures<-failures[-drop_rows,]		
+					}			
+				}				
+			}					
+## Test whether suspensions exist								
+			if("0" %in% ev_info) {					
+				if(is.null(x$qty)) {				
+					susp_vec<-x$time[x$event==0]			
+					sdf<-as.data.frame(table(susp_vec))			
+					st<-as.numeric(levels(sdf[,1]))			
+					sq<-sdf[,2]			
+					suspensions<-data.frame(left=st, right=-1, qty=sq)			
+				}else{				
+					s<-x$time[x$event==0]			
+					suspensions <- data.frame(left = s, right = -1, qty = x$qty[x$event==0])			
+			# sort suspension data according to default decreasing=FALSE					
+					NDX<-order(suspensions$left)		
+					suspensions<-suspensions[NDX,]			
+			## Cannot assume that data input with a qty field is appropriately  consolidated					
+					if(length(unique(suspensions$left)) !=  nrow(suspensions)) {			
+						drop_rows<-NULL		
+						for(srow in nrow(suspensions): 2)  {		
+							if(suspensions[srow,1] == suspensions[srow-1,1]) {	
+								drop_rows<-c(drop_rows, srow)
+								suspensions[srow-1,3] <- suspensions[srow-1,3] + suspensions[srow,3]
+							}	
+						}		
+						suspensions<-suspensions[-drop_rows,]		
+					}			
+				}				
+			}					
+		}else if(is.vector(x))  {						
+			if(anyNA(x))  {					
+			stop("NA in failure data")					
+			}					
+			if(any(x<=0))  {					
+			stop("non-positive values in failure/occurrence data")					
+			}					
+			fail_vec<-sort(x)					
+			fdf<-as.data.frame(table(fail_vec))					
+			ft<-as.numeric(levels(fdf[,1]))					
+			fq<-fdf[,2]					
+			failures<-data.frame(left=ft, right=ft, qty=fq)					
+		}else{						
+			if (length(x) > 0) {					
+				stop("error in x argument type")				
+			}					
+		}						
+		ret<-list(failures=failures,suspensions=suspensions)						
+	}							
+	ret							
+}								
+
+evaluate_s_arg<-function(retx,s) {
+# if s is NULL this function simply returns retx
+	if(length(s)>0)  {
+		if(anyNA(s))  {
+		stop("NA  in suspension data")
+		}
+		if(any(s<=0))  {
+		stop("non-positive values in suspension data")
+		}
+		# sort suspension  data according to default decreasing=FALSE
+		susp_vec<-sort(s)
+		sdf<-as.data.frame(table(susp_vec))
+		st<-as.numeric(levels(sdf[,1]))
+		sq<-sdf[,2]
+		suspensions<-data.frame(left=st, right=-1, qty=sq)
+
+
+		## test for any suspension data in retx
+		if(!is.null(retx$suspensions)) {
+			##If(any(retx$right<0)) {
+			warning("suspensions detected in both x and s arguments")
+		## need to split out failures and suspensions for extra processing
+				failures<-retx$failures
+				suspinx<-retx$suspensions
+				suspensions<-rbind(suspensions, suspinx)
+		# sort suspension  data according to default decreasing=FALSE
+				NDX<-order(suspensions$left)
+				suspensions<-suspensions[NDX,]
+		## Cannot assume that data input with a qty field is appropriately  consolidated
+				if(length(unique(suspensions$left)) !=  nrow(suspensions)) {
+					drop_rows<-NULL
+					for(srow in nrow(suspensions): 2)  {
+						if(suspensions[srow,1] == suspensions[srow-1,1]) {
+							drop_rows<-c(drop_rows, srow)
+							suspensions[srow-1,3] <- suspensions[srow-1,3] + suspensions[srow,3]
+						}
+					}
+					suspensions<-suspensions[-drop_rows,]
+				}
+			ret<-list(failures=failures, suspensions=suspensions)
+		}else{
+			ret<-list(failures=retx$failures, suspensions=suspensions)
+		}
+	}else{
+		ret<-retx
+	}
+	ret
+}
+
+evaluate_interval_arg<-function(rets, interval)  {
+# if interval is NULL this function simply returns rets
+if(!is.null(interval)) {
+	fail_intervals<-NULL
+	susp_intervals<-NULL
 ## interval dataframe validation
 	colname_error<-FALSE
 	if(is(interval, "data.frame"))  {
@@ -45,29 +196,43 @@ mleframe.alt<-function(x, s=NULL, interval=NULL)  {
 			if(test_names[2] !="right") {
 				stop("'right' column name error in interval dataframe object")
 			}
-## test qty column name				
-		if(ncol(interval)>2)  {		
-			if(test_names[3] != "qty")  {	
+## test qty column name
+		if(ncol(interval)>2)  {
+			if(test_names[3] != "qty")  {
 				stop("'qty' column name error in interval dataframe object")
-			}	
-		}		
-## assure no extraneous columns exist in interval				
-		if(!(ncol(interval)==2 || ncol(interval)==3))  {		
-			stop("extraneous columns in interval argument")	
-		}		
+			}
+		}
+## assure no extraneous columns exist in interval
+		if(!(ncol(interval)==2 || ncol(interval)==3))  {
+			stop("extraneous columns in interval argument")
+		}
 
 ## additional validations on interval argument, such as positive numeric checking
 ## removal of potential na's, etc. could take place here
 		if(anyNA(interval))  {
 		stop("NA not handled in interval data")
 		}
-		if(any(c(interval$left,interval$right)<0)) {
-		stop("negative values in interval data")
+
+## Let's be sure the qty field, if present, is all integer, else future havoc could ensue
+## by handling this here even fail or suspension data are covered, if present
+		if(!is.null(interval$qty)) {
+			if(any(!is.integer(interval$qty))) interval$qty<-ceiling(interval$qty)
+## eliminate any rows with non-positive qty
+			drop_rows<-which(interval$qty<=0)
+			if(length(drop_rows)>0) {
+				interval<-interval[-drop_rows,]
+				warning("non-positive qty data eliminated from interval")
+			}
 		}
+
 		if(any((interval$right-interval$left)<=0))  {
-		stop("non-positive interval")
+			true_intervals<-interval[which(interval$right-interval$left>0),]
+			fail_intervals<-interval[which(interval$right==interval$left),]
+			susp_intervals<-interval[which(interval$right-interval$left<0),]
+			interval<-true_intervals
 		}
-		
+## Now procede with original interval handler code
+
 ## add qty column if not provided
 		if(ncol(interval)<3)  {
 
@@ -88,183 +253,150 @@ mleframe.alt<-function(x, s=NULL, interval=NULL)  {
 				)
 			)
 ## now just complete the consolidation of duplicates in the interval dataframe
-			interval<-cbind(lrdf,ivaldf[,2])
-			names(interval)<-c("left","right","qty")
+			intervals<-cbind(lrdf,ivaldf[,2])
+			names(intervals)<-c("left","right","qty")
 
 			# interval<- cbind(interval, qty=c(rep(1,nrow(interval))))
+		} else{
+## here is the place to process true_intervals (as interval) for duplicate entries
+			intervals<-interval
+## sort to facilitate to assure uniform presentation and consolidation of any duplicated entries
+##  only required for dataframe with qty field
+			NDX<-order(intervals$left,intervals$right)
+			intervals<-intervals[NDX,]
+
+			interval_test<-paste(as.character(intervals$left), as.character(intervals$right))
+			if(length(unique(interval_test)) < length(interval_test))  {
+				drop_rows<-NULL
+				for(frow in nrow(intervals): 2)  {
+					if((intervals[frow,1] == intervals[frow-1,1])  && (intervals[frow,2] == intervals[frow-1,2])) {
+						drop_rows<-c(drop_rows, frow)
+						intervals[frow-1,3] <- intervals[frow-1,3] + intervals[frow,3]
+					}
+				}
+				intervals<-intervals[-drop_rows,]
+			}
 		}
 
-## sort to facilitate consolidation of any duplicated entries, may not be required
-		NDX<-order(interval$left,interval$right)
-		interval<-interval[NDX,]
 
 ## finally, reject any other object type but NULL
 	}else{
-		if(length(interval)>0)  {
+		if(!is.null(interval))  {
 			stop("error in interval argument type")
 		}
 	}
 
-## now build dataframes for failures and suspensions
-## could x be a dataframe with time and event columns??
-	suspensions<-NULL
-	if(is.vector(x))  {
-		if(anyNA(x))  {
-		stop("NA in failure data")
-		}
-		if(any(x<=0))  {
-		stop("non-positive values in failure/occurrence data")
+
+
+## test whether fail_intervals were found
+	if(length(fail_intervals)>0) {
+## this code will rarely ever be called
+## add qty column if not provided
+		if(ncol(fail_intervals)<3)  {
+			ivalchar<- apply(fail_intervals,2,as.character)
+			ivalstr<-paste0(ivalchar[,1],"_",ivalchar[,2])
+			ivaldf<-as.data.frame(table(ivalstr))
+			ivalstr2<-as.character(levels(ivaldf[,1]))
+## much done here, but this returns the tabled left and right columns
+## in a dataframe with rows corresponding to the tabled quantities
+			lrdf<-data.frame(
+				matrix(
+					as.numeric(
+						unlist(
+							strsplit(ivalstr2,"_")
+						)
+					)
+				,ncol=2, byrow=T
+				)
+			)
+			fail_intervals<-cbind(lrdf,ivaldf[,2])
+			names(fail_intervals)<-c("left","right","qty")
 		}
 
-		#x<-sort(x)
-## I'm not convinced this needs to be sorted here, but it doesn't hurt
-		fail_vec<-sort(x)
+		## actually rets$failures could be NULL and ignored by rbind
+			failures<-rbind(fail_intervals, rets$failures)
 
-		# failures<-data.frame(left=x,right=x,qty=rep(1,length(x)))
+# sort failure data according to default decreasing=FALSE
+			NDX<-order(failures$left)
+			failures<-failures[NDX,]
+## Cannot assume that data input with a qty field is appropriately  consolidated
+			if(length(unique(failures$left)) !=  nrow(failures)) {
+				drop_rows<-NULL
+				for(frow in nrow(failures): 2)  {
+					if(failures[frow,1] == failures[frow-1,1]) {
+						drop_rows<-c(drop_rows, frow)
+						failures[frow-1,3] <- failures[frow-1,3] + failures[frow,3]
+					}
+				}
+				failures<-failures[-drop_rows,]
+			}
 
-		if(length(s)>0)  {
-		if(anyNA(s))  {
-		stop("NA  in suspension data")
-		}
-		if(any(s<=0))  {
-		stop("non-positive values in suspension data")
-		}
-		susp_vec<-sort(s)
 
-		# suspensions<-data.frame(left=s,right=-1,qty=rep(1,length(s)))
-		}
-## end pure vector argument processing
 	}else{
-	## here a time-event dataframe can be evaluated, if provided as x
-	## This is the support for a time-event dataframe
-		if (is(x, "data.frame")) {
+## since intervals have been defined, must prepare for return of faiilures already found
+		failures<-rets$failures
+	}
 
-		## this test is drawn from Abrem.R
-			if(is.null(x$time) || is.null(x$event)){
-				stop(': Argument \"x\" is missing $time and/or ","$event columns...')
-			}
 
-	## verify positive time values
-			if (anyNA(x$time)) {
-				stop("NA in failure or suspension data")
-			}
-			if (any(x$time<= 0)) {
-				stop("non-positive values in failure or suspension data")
-			}
-	## verify 1's and 0's only in event
-	## using Jurgen's validation code modified now for possibility of failures only in intervals with only suspension data in x
-			event_column_ok=FALSE
-			ev_info <- levels(factor(x$event))
-			if(is.null(interval))  {
-				if(identical(ev_info,c("0","1")) || identical(ev_info,"1")){
-			# okay x is holding event indicators and at least one failure is present
-					event_column_ok=TRUE
-				}
-			}else{
-				if(identical(ev_info,c("0","1")) || identical(ev_info,"1") || identical(ev_info,"0")){
-			# okay x is holding event indicators while failures are reported in intervals which have already been validated
-					event_column_ok=TRUE
-				}
-			}
-			if(!event_column_ok) {
-				stop("event column not '1' or '0' ")
-			}
 
-			if(length(s)>0)  {
-			warning("argument 's' ignored when time-event dataframe provided")
-			}
-
-## need to wrap the determination of failures in the rlq dataframe construction 
-## with a test that exact failures indeed exist			
-			if("1" %in% ev_info) {	
-					if(is.null(x$qty)) {
-						fail_vec<-x$time[x$event==1]
-						# failures <- data.frame(left = f, right = f, qty = rep(1, length(f)))
-					}else{
-	## Let's be sure the qty field is all integer, else future havoc could ensue
-						if(any(!is.integer(x$qty))) x$qty<-ceiling(x$qty)
-						f<-x$time[x$event==1]
-						failures <- data.frame(left = f, right = f, qty = x$qty[x$event==1])
-		# sort failure data wth order consistent with data entry						
-						if( f[1] < f[length(f)]) {NDX<-order(failures$left)			
-						}else{ NDX<-order(failures$left, decreasing=TRUE) }			
-						failures<-failures[NDX,]			
-	## Cannot assume that data input with a qty field is appropriately  consolidated								
-						if(length(unique(failures$left)) !=  nrow(failures)) {			
-							drop_rows<-NULL		
-							for(frow in nrow(failures): 2)  {		
-								if(failures[frow,1] == failures[frow-1,1]) {	
-									drop_rows<-c(drop_rows, frow)
-									failures[frow-1,3] <- failures[frow-1,3] + failures[frow,3]
-								}	
-							}		
-							failures<-failures[-drop_rows,]		
-						}			
-					}
-			}
-#			if(identical(ev_info, c("0","1"))) {
-## Need to permit evaluation of suspension data when only type in the time-event dataframe in x
-			if("0" %in% ev_info) {	
-			s<-x$time[x$event==0]
-				if(is.null(x$qty)) {
-
-					susp_vec<-s
-						# suspensions <- data.frame(left = s, right = -1, qty = rep(1, length(s)))
-					}else{
-	## The assumption is that data input with a qty field is appropriately  consolidated
-						suspensions <- data.frame(left = s, right = -1, qty = x$qty[x$event==0])
-		# sort failure data wth order consistent with data entry						
-						if( s[1] < s[length(s)]) {NDX<-order(suspensions$left)			
-						}else{ NDX<-order(suspensions$left, decreasing=TRUE) }			
-						suspensions<-suspensions[NDX,]
-	## Cannot assume that data input with a qty field is appropriately  consolidated								
-						if(length(unique(suspensions$left)) !=  nrow(suspensions)) {			
-							drop_rows<-NULL		
-							for(srow in nrow(suspensions): 2)  {		
-								if(suspensions[srow,1] == suspensions[srow-1,1]) {	
-									drop_rows<-c(drop_rows, srow)
-									suspensions[srow-1,3] <- suspensions[srow-1,3] + suspensions[srow,3]
-								}	
-							}		
-							suspensions<-suspensions[-drop_rows,]		
-						}	
-					}
-			}
-		}else {
-			if (length(x) > 0) {
-				stop("error in x argument type")
-			}
+	if(length(susp_intervals>0)) {
+## this code will rarely ever be called
+## add qty column if not provided
+		if(ncol(susp_intervals)<3)  {
+			ivalchar<- apply(susp_intervals,2,as.character)
+			ivalstr<-paste0(ivalchar[,1],"_",ivalchar[,2])
+			ivaldf<-as.data.frame(table(ivalstr))
+			ivalstr2<-as.character(levels(ivaldf[,1]))
+## much done here, but this returns the tabled left and right columns
+## in a dataframe with rows corresponding to the tabled quantities
+			lrdf<-data.frame(
+				matrix(
+					as.numeric(
+						unlist(
+							strsplit(ivalstr2,"_")
+						)
+					)
+				,ncol=2, byrow=T
+				)
+			)
+			susp_intervals<-cbind(lrdf,ivaldf[,2])
+			names(susp_intervals)<-c("left","right","qty")
 		}
-## end the time_event dataframe  evaluation and close argument processing
+
+			## actually rets$suspensions could be NULL and will be ignored by rbind
+				suspensions<-rbind(susp_intervals, rets$suspensions)
+
+# sort failure data according to default decreasing=FALSE
+				NDX<-order(suspensions$left)
+				suspensions<-suspensions[NDX,]
+## Cannot assume that data input with a qty field is appropriately  consolidated
+				if(length(unique(suspensions$left)) !=  nrow(suspensions)) {
+					drop_rows<-NULL
+					for(frow in nrow(suspensions): 2)  {
+						if(suspensions[frow,1] == suspensions[frow-1,1]) {
+							drop_rows<-c(drop_rows, frow)
+							suspensions[frow-1,3] <- suspensions[frow-1,3] + suspensions[frow,3]
+						}
+					}
+					suspensions<-suspensions[-drop_rows,]
+				}
+
+	}else{
+## since intervals have been defined, must prepare for return of suspensions already found
+		suspensions<-rets$suspensions
 	}
 
-## consolidate duplicates in any pure failure or suspension vectors
 
-	if(exists("fail_vec")) {
-		fdf<-as.data.frame(table(fail_vec))
-		ft<-as.numeric(levels(fdf[,1]))
-		fq<-fdf[,2]
-		failures<-data.frame(left=ft, right=ft, qty=fq)
-	}
 
-	if(exists("susp_vec")) {
-		sdf<-as.data.frame(table(susp_vec))
-		st<-as.numeric(levels(sdf[,1]))
-		sq<-sdf[,2]
-		suspensions<-data.frame(left=st, right=-1, qty=sq)
-	}
+	ret<-list(failures=failures, suspensions=suspensions, intervals=intervals)
 
-	if(!exists("failures"))  {
-		failures<-NULL
-		if(!is.null("interval"))  {
-
-			if(sum(interval$qty)<3) {
-				warning("insufficient failure data in intervals")
-			}
-		}
-	}
-	outDF<-rbind(failures,suspensions,interval)
-
-	outDF
+}else{
+## the interval argument is NULL so return object will be rets
+	ret<-list(failures=rets$failures, suspensions=rets$suspensions, intervals=NULL)
 }
->>>>>>> 55af8b2192b7a7289cba79a6da9537122acc1516
+
+
+ret
+}
+
+
