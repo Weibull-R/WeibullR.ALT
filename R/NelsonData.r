@@ -13,7 +13,7 @@
 NelsonData<-function(x) {
 	if(is.numeric(x)) {
 		if(x>2 && x<3) {
-			ret<-generate_table2.2()
+			ret<-generate_table2.1()
 		}
 		if(x>3 && x<4) {
 			ret<-generate_table3.1()
@@ -26,8 +26,8 @@ NelsonData<-function(x) {
 		}
 	}
 	if(is.character(x)) {
-		if(x == "table2.2") {
-			ret<-generate_table2.2()
+		if(x == "table2.1") {
+			ret<-generate_table2.1()
 		}
 		if(x == "table3.1") {
 			ret<-generate_table3.1()
@@ -45,13 +45,13 @@ ret
 
 # Table 2.2 is presented on page115 of Wayne Nelson's book "Accelerated Testing".
 # It purports to represent a series tests on  a Class H insulation at elevated temperatures (in deg c)
-generate_table2.2<-function() {	
+generate_table2.1<-function() {	
 	C190<-c( 7228,   7228,   7228,   8448,   9167,   9167,   9167,   9167,   10511,  10511) 
 	C220<-c( 1764,   2436,   2436,   2436,   2436,   2436,   3108,   3108,   3108,   3108) 
 	C240<-c( 1175,   1175,   1521,   1569,   1617,   1665,   1665,   1713,   1761,   1953) 
 	C260<-c( 600,    744,    744,    744,    912,    1128,   1320,   1464,   1608,   1896)
-	table2.2<-data.frame(C190,C220, C240, C260)
-	table2.2
+	table2.1<-data.frame(C190,C220, C240, C260)
+	table2.1
 }
 
 # Table 3.1 is presented on page129 of Wayne Nelson's book "Accelerated Testing".
