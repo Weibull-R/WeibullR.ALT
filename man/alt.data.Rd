@@ -76,8 +76,7 @@
 }
 
 \examples{
-  table2.2<-NelsonData("table2.2")
-  alt_da190<-alt.data(table2.2$C190, stress=190)
-  
+  table2.1<-NelsonData("table2.1")
+  alt_da190<-alt.data(table2.1$C190, stress=190) 
   ClassH_goal<-alt.data(20000, stress=180)
 }

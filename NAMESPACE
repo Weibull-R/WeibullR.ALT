@@ -19,3 +19,4 @@ S3method(plot, alt)
 
   importFrom("WeibullR","getPPP", "lslr", "mlefit", "mleframe", "p2y",
 			 "plot.wblr", "wblr", "wblr.fit")
+  importFrom("methods", "is")
