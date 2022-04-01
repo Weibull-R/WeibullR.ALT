@@ -78,7 +78,7 @@ plot.alt <- function(x,...){
 		list(xlim=xlim, ylim=ylim, log=log, 				
 		xlab=opa$xlab, ylab=opa$ylab, main=main))
 	if(opa$plot.in.Rmarkdown==FALSE) {
-		dev.new(opa$dev.width=5, opa$dev.height=7)
+		dev.new(width=opa$dev.width, height=opa$dev.height)
 	}
 	do.call(plot.default,plotargs)					
 	# draw the gridlines					
