@@ -33,6 +33,7 @@ options.alt<- function(...){
         # message ("Resetting Weibull-R options to default values...")
 	
 	options_alt<-list(	
+		plot.in.Rmarkdown=FALSE,
 		dev.width=5,
 		dev.height=7,
 		# x object is unknown upon call to options.alt
