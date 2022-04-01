@@ -77,7 +77,7 @@ plot.alt <- function(x,...){
 	 plotargs <- c(list(x=NA,axes=FALSE),					
 		list(xlim=xlim, ylim=ylim, log=log, 				
 		xlab=opa$xlab, ylab=opa$ylab, main=main))				
-	dev.new(width=5, height=7)					
+	#dev.new(width=5, height=7)					
 	do.call(plot.default,plotargs)					
 	# draw the gridlines					
 	abline(					
