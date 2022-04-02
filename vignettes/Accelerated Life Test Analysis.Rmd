@@ -1,0 +1,125 @@
+---
+title: "Accelerated Life Test Analysis"
+author: "D. J. Silkworth"
+date: '2022-04-01'
+outvignette: >
+  %\VignetteIndexEntry{Accelerated Life Test Analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}put: rmarkdown::html_vignette
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Table 2.1
+
+Wayne Nelson provides Table 2.1 as his first example of Graphical Data Analysis in his book "Accelerated Testing - Statistical Models, Test Plans, and Data Analysis". This table provides complete failure data on 40 motorettes using a Class H insulation material. This vignette will document this example using the WeibullR.ALT package on R.
+```{r}
+library(WeibullR.ALT)
+```
+Table 2.1 can be generated as a simple dataframe using the NelsonData function
+
+```{r}
+table2.1<-NelsonData("table2.1")
+table2.1
+```
+
+The column names have been modified as valid R object names reflecting the temperature levels, in degrees C, the table values are taken as hours to failure.
+
+In order to utilize this data in an alt object within WeibullR.ALT the data must be generated as alt.data objects. The stress level is provided for each set as a simple numeric value.
+
+```{r} 
+alt_da190<-alt.data(table2.1$C190, stress=190)
+alt_da220<-alt.data(table2.1$C220, stress=220)
+alt_da240<-alt.data(table2.1$C240, stress=240)
+alt_da260<-alt.data(table2.1$C260, stress=260)
+```
+
+A goal can be optionally generated as a single line alt.data object.
+
+```{r} 
+ClassH_goal<-alt.data(20000, stress=180)
+```
+An alt object can now be created with the alt.data objects loaded into a list. Required information is the choice of distribution from which to fit the failure time data, the alt model, and the method to be used for distribution fitting.
+
+By default this intial object construction will generate a probability plot based on a wblr object displaying each of the stress level data sets as fitted to the specified distribution.
+
+```{r fig.height=6.5, fig.align = 'center'}  
+ClassH_obj<-alt.make(list(alt_da190, alt_da220, alt_da240, alt_da260),	
+	dist="lognormal",
+	alt.model="arrhenius",
+	method.fit="lslr",
+	goal=ClassH_goal)
+```
+
+Some anomalous points appear in the higher stress level data at 260 deg C. Nelson's text explains that some test errors may have explained this divergence from expectation. It is desired to establish parallel fitted lines. A couple of actions can be taken to make this happen in a sensible way. Firstly, the fitted slope of the offending data set can be ignored, while accepting its fitted mean. Secondly, it is possible to right censor the last 5 or 6 data points in that set.
+
+Here it is chosen to censor the last 5 points. This strategy will only be effective with lslr fitting.
+
+```{r}
+alt_da260<-alt.data(x=table2.1$C260[1:5], s=table2.1$C260[6:10], stress=260)
+```
+
+Now re-make the initial alt object.
+
+```{r fig.height=6.5, fig.align = 'center'}  
+ClassH_obj<-alt.make(list(alt_da190, alt_da220, alt_da240, alt_da260),	
+	dist="lognormal",
+	alt.model="arrhenius",
+	method.fit="lslr",
+	goal=ClassH_goal)
+```
+
+The fitted lines for the data sets are all nearly parallel. To establish a weighted mean for a common slope, it might be fair to ignore the 4th data set for 260 deg C that was altered anyway. 
+
+```{r fig.height=6, fig.align = 'center'}    
+ClassH_obj<-alt.parallel(ClassH_obj, ignore_slope=4)
+```
+
+The alt.parallel function adds a data frame item to the alt object containing the distribution parameters for the parallel fitted lines.
+
+```{r}
+ClassH_obj$parallel_par
+```
+A first view of the accelerated life relationship plot is instructive at this point. The failure data points are presented on a log-linear plot of time vs thermal stress for the Arrhenius model. Of particular interest are the P1 parameter points (median points in this case) displayed as red X's. Note that plot.alt() is S3 registered, so a plot() call on an alt object calls plot.alt().The plot.in.Rmarkdown option would not ordinarily be set.
+
+```{r fig.dim = c(5, 7), fig.align = 'center'}  
+plot(ClassH_obj, is.plot.parallel_params=TRUE,
+     plot.in.Rmarkdown=TRUE)
+```
+
+Finally, a linear fit is made on the parallel P1 points (medians for lognormal in this case) versus the stress. The coefficients for this fit are added to the alt object.
+
+```{r} 
+ClassH_obj<-alt.fit(ClassH_obj)
+ClassH_obj$alt_coef
+```
+
+Now, the accelerated life relationship plot can be completed with bounding percentile lines provided using the default percentiles = c(10,90). The units for stress can be added for clarity. In this example it is noted that the goal is far out of reach.
+
+```{r fig.dim = c(5, 7), fig.align = 'center'} 
+plot(ClassH_obj, xlab=expression(paste("Temperature ",degree,"C")),
+     plot.in.Rmarkdown=TRUE)
+```
+
+It is possible to estimate the activation energy for the degeneration reaction since the units of thermal stress and the coefficients for the Arrhenius relationship are known.
+
+```{r}
+coef<-ClassH_obj$alt_coef
+K1<-180+273   # degrees Kelvin
+t1<-exp(coef[2]*180 +coef[1])
+K2<-260+273
+t2<-exp(coef[2]*260+coef[1])
+gamma1<-(K1*K2/(K2-K1))*log10(t1/t2)
+E<-2.303*.8617e-4*gamma1
+```
+Here, 2.303 is the first order rate constant and .8617e-4 is the Boltzmann constant.
+
+```{r}
+print(paste0("Activation Energy is ",round(E,2)," eV"))
+```
+
+
+
