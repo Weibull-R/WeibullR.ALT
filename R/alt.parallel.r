@@ -1,4 +1,4 @@
-alt.parallel<-function(x, ignore_slope=0, set.exponential=FALSE, graphicalP1limit=3, view_parallel_fits=TRUE)  {
+alt.parallel<-function(x, ignore_slope=0, set.exponential=FALSE, fail_points_limit=3, view_parallel_fits=TRUE)  {
 	# must confirm x is an alt object
 	if(class(x)!="alt") stop("x is not an alt object")
 	# set.exponential only applies when distribution is set to weibull
@@ -100,26 +100,17 @@ alt.parallel<-function(x, ignore_slope=0, set.exponential=FALSE, graphicalP1limi
 		parallel_P2<- 1.0
 	}
 
-	## This might become optional code
-	if(x$dist == "lognormal")  {
-	for(set in 1:length(x$data))  {
-		if(x$data[[set]]$num_fails<graphicalP1limit && x$data[[set]]$num_fails>0) {
+	# alternate fitting of P1 by graphical means, due to insufficient fail points		
+	for(set in 1:length(x$data))  {		
+		fail_points<-nrow(x$data[[set]]$data[x$data[[set]]$data$right>0,])	
+		if( x$data[[set]]$num_fails>0 && fail_points<fail_point_limit) {	
 			eppp<-extract_ppp(x,set)
 			graphical_point<-c(log(mean(eppp$time)), mean(p2y(eppp$ppp,canvas=x$dist)))
-			fit_list[[set]][1]<-graphical_point[1]-log(graphical_point[2])*parallel_P2
-		}
-	}
-	}
+			if(x$dist == "lognormal")  fit_list[[set]][1]<-graphical_point[1]-log(graphical_point[2])*parallel_P2
+			if(x$dist=="weibull") fit_list[[set]][1]<-exp(graphical_point[1]-graphical_point[2]/parallel_P2)
+		}	
+	}		
 
-	if(x$dist=="weibull") {
-		for(set in 1:length(x$data))  {
-			if(x$data[[set]]$num_fails<graphicalP1limit && x$data[[set]]$num_fails>0) {
-			eppp<-extract_ppp(x,set)
-			graphical_point<-c(log(mean(eppp$time)), mean(p2y(eppp$ppp,canvas=x$dist)))
-			fit_list[[set]][1]<-exp(graphical_point[1]-graphical_point[2]/parallel_P2)
-			}
-		}
-	}
 
 	parallelDF<-data.frame(P1=0, P2=0, stress=0, wt=0)
 	for(li in 1:length(fit_list))  {

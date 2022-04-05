@@ -7,7 +7,7 @@
 \description{
     This function generates parameters for each applicable data set with the same log standard deviation or weibull slope. 
 	}
-\usage{alt.parallel(x, ignore_slope=0, set.exponential=FALSE, graphicalP1limit=3, view_parallel_fits=TRUE)
+\usage{alt.parallel(x, ignore_slope=0, set.exponential=FALSE, fail_points_limit=3, view_parallel_fits=TRUE)
 	}
 
 \arguments{
@@ -20,7 +20,7 @@
 	\item{set.exponential}{
 		A logical used to establish an exponential assumption for the provided life data.
 	}
-	\item{graphicalP1limit}{
+	\item{, fail_points_limit}{
 		The upper limit of failure points under which P1 parameters are determined graphically. This is how P1 values can be established for data sets with only 1 or 2 failures and do not satisfy fitting methods.
 		This limit can be raised for some data sets with limited failures but many suspensions in order to establish a more pleasing parallel fit.
 	}
