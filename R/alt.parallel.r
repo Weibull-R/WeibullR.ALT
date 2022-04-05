@@ -1,4 +1,4 @@
-alt.parallel<-function(x, ignore_slope=0, set.exponential=FALSE, view_parallel_fits=TRUE)  {
+alt.parallel<-function(x, ignore_slope=0, set.exponential=FALSE, graphicalP1limit=3, view_parallel_fits=TRUE)  {
 	# must confirm x is an alt object
 	if(class(x)!="alt") stop("x is not an alt object")
 	# set.exponential only applies when distribution is set to weibull
@@ -103,17 +103,17 @@ alt.parallel<-function(x, ignore_slope=0, set.exponential=FALSE, view_parallel_f
 	## This might become optional code
 	if(x$dist == "lognormal")  {
 	for(set in 1:length(x$data))  {
-	#	if(x$data[[set]]$num_fails<3 && x$data[[set]]$num_fails>0) {
+		if(x$data[[set]]$num_fails<graphicalP1limit && x$data[[set]]$num_fails>0) {
 			eppp<-extract_ppp(x,set)
 			graphical_point<-c(log(mean(eppp$time)), mean(p2y(eppp$ppp,canvas=x$dist)))
 			fit_list[[set]][1]<-graphical_point[1]-log(graphical_point[2])*parallel_P2
-	#	}
+		}
 	}
 	}
 
 	if(x$dist=="weibull") {
 		for(set in 1:length(x$data))  {
-			if(x$data[[set]]$num_fails<5 && x$data[[set]]$num_fails>0) {
+			if(x$data[[set]]$num_fails<graphicalP1limit && x$data[[set]]$num_fails>0) {
 			eppp<-extract_ppp(x,set)
 			graphical_point<-c(log(mean(eppp$time)), mean(p2y(eppp$ppp,canvas=x$dist)))
 			fit_list[[set]][1]<-exp(graphical_point[1]-graphical_point[2]/parallel_P2)
