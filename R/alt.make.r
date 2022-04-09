@@ -50,7 +50,7 @@ valid_sets<-0
 		
 		obj$data[[set]]$num_fails<-Nf
 		if(Nf > 0) {	
-			fail_points<length(unique(fail_medians))
+			fail_points<-length(unique(fail_medians))
 			fail_range<-(max(fail_medians)-min(fail_medians))/max(fail_medians)
 		}	
 			
