@@ -1,7 +1,7 @@
 Package: WeibullR.ALT
 Type: Package
 Title: Accellerated Life Testing Using WeibullR
-Version: 0.5.13
+Version: 0.5.14
 Description: Graphical data analysis of accelerated life tests.
 License: GPL (>= 3)
 Date: 2022-4-9

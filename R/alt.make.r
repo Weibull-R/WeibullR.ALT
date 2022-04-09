@@ -148,5 +148,21 @@ view_dist_fits<-function(x)  {
 	## ignore_slope cannot be set as an object element here, because this function is optionally called							
 	## however, the test is simple during a loop through data sets if(x$data[[set]]$num_fails<3) 							
 								
-	plot.wblr(wblr_list)							
+	plot.wblr(wblr_list)
+	
+	#finally add a legend		
+	le<-NULL; col<-NULL; lty<-NULL; cex<-NULL; lwd<-NULL		
+	for(set in 1:length(x$data))  {		
+		if(x$data[[set]]$valid_set==TRUE) {	
+			le<-c(le, paste0("set ", set,", stress ",x$data[[set]]$stress))
+			col<-c(col, colors[set])
+			lty<-c(lty, 1)
+			lwd<-c(lwd,2)
+			cex<-c(cex, 0.8)
+		}	
+	}		
+	legend("topleft", inset=0.01, legend=le,		
+		   col=col, lty=lty, cex=cex, lwd=lwd, bg="white")	
+
+	
 }								

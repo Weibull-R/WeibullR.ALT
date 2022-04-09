@@ -1,4 +1,4 @@
-alt.parallel<-function(x, ignore_slope=0, set.exponential=FALSE, fail_points_limit=3, view_parallel_fits=TRUE)  {
+alt.parallel<-function(x, ignore_slope=0, set.exponential=FALSE, view_parallel_fits=TRUE)  {
 	# must confirm x is an alt object
 	if(class(x)!="alt") stop("x is not an alt object")
 	# set.exponential only applies when distribution is set to weibull
@@ -13,7 +13,7 @@ alt.parallel<-function(x, ignore_slope=0, set.exponential=FALSE, fail_points_lim
 	drop_wblr<-NULL
 		for(set in 1:length(x$data))  {
 
-		if(x$data[[set]]$num_fails<3)  {
+		if(x$data[[set]]$valid_set==FALSE)  {
 			drop_wblr<-c(drop_wblr, set)
 			if(!set  %in% ignore_slope) ignore_slope<-c(ignore_slope, set)
 			this_fit<-c(NA, NA)
@@ -83,9 +83,7 @@ alt.parallel<-function(x, ignore_slope=0, set.exponential=FALSE, fail_points_lim
 			if(set.exponential == FALSE)  {
 				if(! set %in% ignore_slope) {
 					num_pts<-0
-					#num_pts<-length(fa) + length(su)
 					num_pts<-sum(x$data[[set]]$data$qty)
-					#if(found_interval==TRUE) num_pts<-num_pts+nrow(interval)
 					num_valid_pts<-num_valid_pts+num_pts
 					cumm_P2<-num_pts * this_fit[2]
 					cumm_valid_P2<-cumm_valid_P2 + cumm_P2
@@ -101,9 +99,9 @@ alt.parallel<-function(x, ignore_slope=0, set.exponential=FALSE, fail_points_lim
 	}
 
 	# alternate fitting of P1 by graphical means, due to insufficient fail points		
-	for(set in 1:length(x$data))  {		
-		fail_points<-nrow(x$data[[set]]$data[x$data[[set]]$data$right>0,])	
-		if( x$data[[set]]$num_fails>0 && fail_points<fail_point_limit) {	
+	for(set in 1:length(x$data))  {	
+	# ignore_slope now includes both invalid sets and those specified as ignore_slope
+		if( x$data[[set]]$num_fails>0 && set %in% ignore_slope) {	
 			eppp<-extract_ppp(x,set)
 			graphical_point<-c(log(mean(eppp$time)), mean(p2y(eppp$ppp,canvas=x$dist)))
 			if(x$dist == "lognormal")  fit_list[[set]][1]<-graphical_point[1]-log(graphical_point[2])*parallel_P2
@@ -170,14 +168,14 @@ alt.parallel<-function(x, ignore_slope=0, set.exponential=FALSE, fail_points_lim
 	le<-NULL; col<-NULL; lty<-NULL; cex<-NULL; lwd<-NULL
 	for(set in 1:length(x$data))  {
 		if(x$data[[set]]$num_fails > 0) {
-			le<-c(le, paste0("stress ",x$data[[set]]$stress))
+			le<-c(le, paste0("set ", set,", stress ",x$data[[set]]$stress))
 			col<-c(col, colors[set])
 			lty<-c(lty, 1)
 			lwd<-c(lwd,2)
 			cex<-c(cex, 0.8)
 		}
 	}
-	legend("right", inset=0.05, legend=le,
+	legend("topleft", inset=0.01, legend=le,
 		   col=col, lty=lty, cex=cex, lwd=lwd, bg="white")
 
 
