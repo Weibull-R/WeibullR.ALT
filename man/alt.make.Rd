@@ -5,10 +5,11 @@
     Create a \code{alt} Object for Analysis of Accelerated Life (Failure) Test Data
 }
 \description{
-    This function reads life test data for a single stress level using the flexible input format
-	also provided for \code{"WeibullR::mleframe"} to create an \code{"alt.data"} object.
+    This function creates an initial alt object based on a list of alt.data objects, a distribution, 
+	an accelerated life relationship model, and a method for distrubtion fitting
 	}
-\usage{alt.make(x, dist, alt.model, method.fit="mle-rba", goal=NULL, view_dist_fits=TRUE)
+\usage{alt.make(x, dist, alt.model, method.fit="mle-rba", goal=NULL,
+					set_validation=NULL, view_dist_fits=TRUE)
 	}
 
 \arguments{
@@ -22,10 +23,15 @@
 		A string argument defining the relationship model to be applied to the accelerated life tests. Accepted values are "arrhenius" or "power".
 	}
 	\item{method.fit}{
-		A string argument defining the method to be used for fitting individual life test data sets. Default value is "mle-rba". Other accpeted values are "lslr", "mle", and "mle-unbias".
+		A string argument defining the method to be used for fitting individual life test data sets. 
+		Default value is "mle-rba". Other accpeted values are "lslr", "mle", and "mle-unbias".
 	}
 	\item{goal}{
 		An optional alt.data object defining a proposed goal for the component under test.
+	}
+	\item{set_validation}{
+		An optional list to modify defaults hard coded in alt.make. A set is deemed valid for wblr construction 
+		and normal distribution fitting if it has at least these elements hard coded as (fail_points=2, num_fails=3, fail_range=.03).
 	}
 	\item{view_dist_fits}{
 		A logical defining whether to generate a probability plot of the distribution fits on the input data objects.
