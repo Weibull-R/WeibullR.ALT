@@ -28,7 +28,7 @@ alt.make<-function(x, dist, alt.model, method.fit="mle-rba", goal=NULL, set_vali
 	}		
 
 valid<-list(fail_points=2, num_fails=3, fail_range=.03)
-if(!is.null(set_validation)) valid<-modifyList(validation_limits, set_validation)
+if(!is.null(set_validation)) valid<-modifyList(valid, set_validation)
 
 valid_sets<-0
 	
