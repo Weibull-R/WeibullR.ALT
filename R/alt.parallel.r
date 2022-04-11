@@ -162,22 +162,22 @@ alt.parallel<-function(x, ignore_slope=0, set.exponential=FALSE, view_parallel_f
 				}
 			}
 		}
-	}
-
+		
 	#finally add a legend
-	le<-NULL; col<-NULL; lty<-NULL; cex<-NULL; lwd<-NULL
-	for(set in 1:length(x$data))  {
-		if(x$data[[set]]$num_fails > 0) {
-			le<-c(le, paste0("set ", set,", stress ",x$data[[set]]$stress))
-			col<-c(col, colors[set])
-			lty<-c(lty, 1)
-			lwd<-c(lwd,2)
-			cex<-c(cex, 0.8)
-		}
+		le<-NULL; col<-NULL; lty<-NULL; cex<-NULL; lwd<-NULL
+		for(set in 1:length(x$data))  {
+			if(x$data[[set]]$num_fails > 0) {
+				le<-c(le, paste0("set ", set,", stress ",x$data[[set]]$stress))
+				col<-c(col, colors[set])
+				lty<-c(lty, 1)
+				lwd<-c(lwd,2)
+				cex<-c(cex, 0.8)
+			}
 	}
 	legend("topleft", inset=0.01, legend=le,
-		   col=col, lty=lty, cex=cex, lwd=lwd, bg="white")
-
+		   col=col, lty=lty, cex=cex, lwd=lwd, bg="white")		
+		
+	}
 
 	return(x)
 
