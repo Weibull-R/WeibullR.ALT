@@ -71,7 +71,9 @@ generate_table3.1<-function() {
 
 # Table 4.1 is presented on page135 of Wayne Nelson's book "Accelerated Testing".
 # It purports to represent a series tests on  a Class B insulation at elevated temperatures (in deg c)
+# A test is included at 150 deg C, but there were no failures at 8064 hours (almost a year!).
 generate_table4.1<-function() {	
+	C150s<-rep(8064,10)
 	C170f<-c(1764,   2772,   3444,   3542,   3780,   4860,   5196)
 	C170s<-c(5448,   5448,   5448)               
 	C190f<-c(408,    408,    1344,   1344,   1440)       
@@ -79,7 +81,7 @@ generate_table4.1<-function() {
 	C220f<-c(408,    408,    504,    504,    504)        
 	C220s<-c(528,    528,    528,    528,    528)
 	
-	table4.1<-list(C170f=C170f, C170s=C170s, C190f=C190f, C190s=C190s, C220f=C220f, C220s=C220s)
+	table4.1<-list(C150s=C150s, C170f=C170f, C170s=C170s, C190f=C190f, C190s=C190s, C220f=C220f, C220s=C220s)
 	table4.1
 }
 
