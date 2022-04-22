@@ -228,7 +228,13 @@ if(!is.null(interval)) {
 		if(any((interval$right-interval$left)<=0))  {
 			true_intervals<-interval[which(interval$right-interval$left>0),]
 			fail_intervals<-interval[which(interval$right==interval$left),]
-			susp_intervals<-interval[which(interval$right-interval$left<0),]
+			susp_intervals<-interval[which(interval$right-interval$left<0),]		
+			if(any(susp_intervals$right>0)) {	
+				stop("error in interval data, right less than left, but not less than or equal 0")
+			}else{	
+				susp_intervals$right<-rep(-1, nrow(susp_intervals))
+			}	
+
 			interval<-true_intervals
 		}
 ## Now procede with original interval handler code
@@ -289,7 +295,7 @@ if(!is.null(interval)) {
 
 
 ## test whether fail_intervals were found
-	if(length(fail_intervals)>0) {
+	if(nrow(fail_intervals)>0) {
 ## this code will rarely ever be called
 ## add qty column if not provided
 		if(ncol(fail_intervals)<3)  {
@@ -339,7 +345,7 @@ if(!is.null(interval)) {
 
 
 
-	if(length(susp_intervals>0)) {
+	if(nrow(susp_intervals)>0) {
 ## this code will rarely ever be called
 ## add qty column if not provided
 		if(ncol(susp_intervals)<3)  {
