@@ -295,6 +295,7 @@ if(!is.null(interval)) {
 
 
 ## test whether fail_intervals were found
+	if(!is.null(nrow(fail_intervals))) {
 	if(nrow(fail_intervals)>0) {
 ## this code will rarely ever be called
 ## add qty column if not provided
@@ -341,10 +342,10 @@ if(!is.null(interval)) {
 	}else{
 ## since intervals have been defined, must prepare for return of faiilures already found
 		failures<-rets$failures
-	}
+	}}
 
 
-
+	if(!is.null(nrow(susp_intervals))) {
 	if(nrow(susp_intervals)>0) {
 ## this code will rarely ever be called
 ## add qty column if not provided
@@ -390,10 +391,16 @@ if(!is.null(interval)) {
 	}else{
 ## since intervals have been defined, must prepare for return of suspensions already found
 		suspensions<-rets$suspensions
-	}
+	}}
 
-
-
+if(!exists("failures")) {
+		## actually rets$failures could be NULL and ignored by rbind
+			failures<-rbind(fail_intervals, rets$failures)
+}
+if(!exists("suspensions")) {
+		## actually rets$suspensions could be NULL and will be ignored by rbind
+			suspensions<-rbind(susp_intervals, rets$suspensions)
+}
 	ret<-list(failures=failures, suspensions=suspensions, intervals=intervals)
 
 }else{
@@ -404,5 +411,3 @@ if(!is.null(interval)) {
 
 ret
 }
-
-
