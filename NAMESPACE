@@ -6,7 +6,8 @@ alt.fit,
 options.alt,
 plot.alt,
 mleframe.alt,
-NelsonData
+NelsonData,
+MeekerData
 )
 
 S3method(plot, alt) 
