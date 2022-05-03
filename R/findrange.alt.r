@@ -7,6 +7,10 @@ findrange.alt<-function(alt)  {
 		if(!is.null(alt$goal)) {	
 			alltimes<-c(alltimes, alt$goal$data$right)
 		}	
+		if(!is.null(alt$parallel_par)) {	
+			if(alt$dist=="weibull") alltimes<-c(alltimes, alt$parallel_par$P1)
+			if(alt$dist=="lognormal") alltimes<-c(alltimes, exp(alt$parallel_par$P1))
+		}	
 			
 	allstress<-NULL		
 		for(set in 1:length(alt$data)) {	

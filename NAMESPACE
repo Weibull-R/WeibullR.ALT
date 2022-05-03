@@ -6,6 +6,7 @@ alt.fit,
 options.alt,
 plot.alt,
 mleframe.alt,
+findrange.alt,
 NelsonData,
 MeekerData
 )
