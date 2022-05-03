@@ -63,7 +63,7 @@ plot.alt <- function(x,...){
     # +--------------------------+
     # |  create new plot canvas  |
     # +--------------------------+
-    ra <- findrange(x)	
+    ra <- findrange.alt(x)	
 	ylimits <- range(ra$yrange,na.rm=TRUE)					
 	ylim <- c(10^(floor(log10(ylimits[1])-0.5)),					
 	            10^(ceiling(log10(ylimits[2])+.5)))					
