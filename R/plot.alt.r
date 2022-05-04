@@ -267,11 +267,11 @@ points2plot<-function(x, jf=.001)  {
 				## excluding suspensions		
 				if(  x$data[[set]]$data$right[li] - x$data[[set]]$data$left[li] > 0 )  {		
 					time<-c(time, (x$data[[set]]$data$left[li] + x$data[[set]]$data$right[li])/2)	
-					stress<-c(stress, x$data[[set]]$stress)	
+					stress<-c(stress, x$data[[set]]$stress[1])	
 				}		
 				if(  x$data[[set]]$data$right[li] - x$data[[set]]$data$left[li] == 0 )  {		
 					time<-c(time, x$data[[set]]$data$left[li])	
-					stress<-c(stress, x$data[[set]]$stress)	
+					stress<-c(stress, x$data[[set]]$stress[1])	
 				}		
 						
 			}			
@@ -280,11 +280,11 @@ points2plot<-function(x, jf=.001)  {
 				## excluding suspensions		
 				if(  x$data[[set]]$data$right[li] - x$data[[set]]$data$left[li] > 0 )  {		
 					time<-c(time, rep((x$data[[set]]$data$left[li] + x$data[[set]]$data$right[li])/2, x$data[[set]]$data$qty[li]))	
-					stress<-c(stress, qjitter(x$data[[set]]$stress,  x$data[[set]]$data$qty[li], jf))	
+					stress<-c(stress, qjitter(x$data[[set]]$stress[1],  x$data[[set]]$data$qty[li], jf))	
 				}		
 				if(  x$data[[set]]$data$right[li] - x$data[[set]]$data$left[li] == 0 )  {		
 					time<-c(time, rep(x$data[[set]]$data$left[li], x$data[[set]]$data$qty[li]))	
-					stress<-c(stress, qjitter(x$data[[set]]$stress,  x$data[[set]]$data$qty[li], jf))	
+					stress<-c(stress, qjitter(x$data[[set]]$stress[1],  x$data[[set]]$data$qty[li], jf))	
 				}		
 						
 			}			

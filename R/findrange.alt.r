@@ -14,10 +14,10 @@ findrange.alt<-function(alt)  {
 			
 	allstress<-NULL		
 		for(set in 1:length(alt$data)) {	
-			allstress<-c(allstress, alt$data[[set]]$stress)
+			allstress<-c(allstress, alt$data[[set]]$stress[1])
 		}	
 		if(!is.null(alt$goal)) {	
-			allstress<-c(allstress, alt$goal$stress)
+			allstress<-c(allstress, alt$goal$stress[1])
 		}
 		zero_positions<-which(alltimes==0)	
 		if(length(zero_positions>0)) {	

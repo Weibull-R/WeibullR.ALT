@@ -16,7 +16,7 @@ alt.fit<-function(x, omit_set=0)  {
 	for(row in 1:nrow(modelDF))  {		
 		if(modelDF$wt[row]>0) {	
 		P1vec<-c(P1vec, rep(modelDF$P1[row], modelDF$wt[row]))	
-		stressvec<-c(stressvec, rep(modelDF$stress[row], modelDF$wt[row]))	
+		stressvec<-c(stressvec, rep(modelDF$stress[row][1], modelDF$wt[row]))	
 		}	
 	}		
 	## fixes attributed to debug of LuValle example
