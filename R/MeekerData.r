@@ -2,6 +2,9 @@ MeekerData<-function(x) {
 	        xchar<-as.character(x)		
 	        subx<-substr(xchar, nchar(xchar)-1, nchar(xchar))		
 	if(!is.na(suppressWarnings(as.numeric(subx)))) {		
+		if(subx=="10")  {        	
+			ret<-generateTable_C.10()
+		}	
 		if(subx=="13")  {        	
 			ret<-generateTable_C.13()
 		}	
@@ -49,6 +52,18 @@ Hr8084=c(   0.62,   0.38,   0.81,   0.48,   0.57,   0.58,   0.7,    0.55,   0.85
 ret}			
 			
 			
+# Temperature-Accelerated Life Test Data for Device-A		
+# from Hooper and Amster (1990)		
+# This data is used as a first example of applying the alt data analysis process pages 494-500		
+		
+generateTable_C.10<-function() {		
+ret<-data.frame(		
+time=c( 5000,   1298,   1390,   3187,   3241,   3261,   3313,   4501,   4568,   4841,   4982,   5000,   581,    925,    1432,   1586,   2452,   2734,   2772,   4106,   4674,   5000),		
+event=c(    0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0),		
+qty=c(  30, 1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  90, 1,  1,  1,  1,  1,  1,  1,  1,  1,  11),		
+TempC=c(    10, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60))		
+ret		
+}		
 			
 			
 			
