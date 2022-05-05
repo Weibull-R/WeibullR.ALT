@@ -8,8 +8,8 @@ findrange.alt<-function(alt)  {
 			alltimes<-c(alltimes, alt$goal$data$right)
 		}	
 		if(!is.null(alt$parallel_par)) {	
-			if(alt$dist=="weibull") alltimes<-c(alltimes, alt$parallel_par$P1)
-			if(alt$dist=="lognormal") alltimes<-c(alltimes, exp(alt$parallel_par$P1))
+			if(alt$dist=="weibull") alltimes<-c(alltimes, na.omit(alt$parallel_par$P1))
+			if(alt$dist=="lognormal") alltimes<-c(alltimes, exp(na.omit(alt$parallel_par$P1)))
 		}	
 			
 	allstress<-NULL		
