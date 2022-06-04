@@ -241,7 +241,7 @@ if(!is.null(interval)) {
 				interval<-NULL
 			}
 		}
-		if(!is.null(interval)  {
+		if(!is.null(interval))  {
 ## Now procede with original interval handler code
 ## add qty column if not provided
 		if(ncol(interval)<3)  {
