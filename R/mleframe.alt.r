@@ -238,10 +238,11 @@ if(!is.null(interval)) {
 			if(nrow(true_intervals)>0) {
 				interval<-true_intervals
 			}else{
-				interval<-NULL
+			# note designation of intervals is output, interval is input
+				intervals<-NULL
 			}
 		}
-		if(!is.null(interval))  {
+		if(!is.null(intervals))  {
 ## Now procede with original interval handler code
 ## add qty column if not provided
 		if(ncol(interval)<3)  {
