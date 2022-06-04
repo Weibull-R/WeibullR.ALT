@@ -235,7 +235,7 @@ if(!is.null(interval)) {
 				susp_intervals$right<-rep(-1, nrow(susp_intervals))
 			}	
 ## test whether any true_intervals were found
-			if(!is.null(nrow(true_intervals))) {
+			if(nrow(true_intervals)>0) {
 				interval<-true_intervals
 			}else{
 				interval<-NULL
