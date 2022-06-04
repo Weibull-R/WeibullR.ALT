@@ -234,11 +234,15 @@ if(!is.null(interval)) {
 			}else{	
 				susp_intervals$right<-rep(-1, nrow(susp_intervals))
 			}	
-
-			interval<-true_intervals
+## test whether any true_intervals were found
+			if(!is.null(nrow(true_intervals))) {
+				interval<-true_intervals
+			}else{
+				interval<-NULL
+			}
 		}
+		if(!is.null(interval)  {
 ## Now procede with original interval handler code
-
 ## add qty column if not provided
 		if(ncol(interval)<3)  {
 
@@ -283,7 +287,7 @@ if(!is.null(interval)) {
 				intervals<-intervals[-drop_rows,]
 			}
 		}
-
+		} # close the test for interval is null, because there were no true_intervals
 
 ## finally, reject any other object type but NULL
 	}else{
@@ -342,8 +346,8 @@ if(!is.null(interval)) {
 	}else{
 ## since intervals have been defined, must prepare for return of faiilures already found
 		failures<-rets$failures
-	}}
-
+	}
+	} # close the test for no fail_intervals found 
 
 	if(!is.null(nrow(susp_intervals))) {
 	if(nrow(susp_intervals)>0) {
@@ -391,7 +395,8 @@ if(!is.null(interval)) {
 	}else{
 ## since intervals have been defined, must prepare for return of suspensions already found
 		suspensions<-rets$suspensions
-	}}
+	}
+	} #close the test for no susp_intervals found
 
 if(!exists("failures")) {
 		## actually rets$failures could be NULL and ignored by rbind
