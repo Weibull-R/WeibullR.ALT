@@ -242,7 +242,8 @@ if(!is.null(interval)) {
 				intervals<-NULL
 			}
 		}
-		if(!is.null(intervals))  {
+## same test required again, because intervals has not necessarily been set yet		
+		if(nrow(true_intervals)>0) {
 ## Now procede with original interval handler code
 ## add qty column if not provided
 		if(ncol(interval)<3)  {
