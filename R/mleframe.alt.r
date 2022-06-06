@@ -233,69 +233,67 @@ if(!is.null(interval)) {
 				stop("error in interval data, right less than left, but not less than or equal 0")
 			}else{	
 				susp_intervals$right<-rep(-1, nrow(susp_intervals))
-			}	
-## test whether any true_intervals were found
-			if(nrow(true_intervals)>0) {
-				interval<-true_intervals
-			}else{
-			# note designation of intervals is output, interval is input
-				intervals<-NULL
 			}
 		}
-## same test required again, because intervals has not necessarily been set yet		
+		
+## test whether any true_intervals were found
 		if(nrow(true_intervals)>0) {
+			interval<-true_intervals
 ## Now procede with original interval handler code
 ## add qty column if not provided
-		if(ncol(interval)<3)  {
+			if(ncol(interval)<3)  {
 
-			ivalchar<- apply(interval,2,as.character)
-			ivalstr<-paste0(ivalchar[,1],"_",ivalchar[,2])
-			ivaldf<-as.data.frame(table(ivalstr))
-			ivalstr2<-as.character(levels(ivaldf[,1]))
+				ivalchar<- apply(interval,2,as.character)
+				ivalstr<-paste0(ivalchar[,1],"_",ivalchar[,2])
+				ivaldf<-as.data.frame(table(ivalstr))
+				ivalstr2<-as.character(levels(ivaldf[,1]))
 ## much done here, but this returns the tabled left and right columns
 ## in a dataframe with rows corresponding to the tabled quantities
-			lrdf<-data.frame(
-				matrix(
-					as.numeric(
-						unlist(
-							strsplit(ivalstr2,"_")
+				lrdf<-data.frame(
+					matrix(
+						as.numeric(
+							unlist(
+								strsplit(ivalstr2,"_")
+							)
 						)
+					,ncol=2, byrow=T
 					)
-				,ncol=2, byrow=T
 				)
-			)
 ## now just complete the consolidation of duplicates in the interval dataframe
-			intervals<-cbind(lrdf,ivaldf[,2])
-			names(intervals)<-c("left","right","qty")
+				intervals<-cbind(lrdf,ivaldf[,2])
+				names(intervals)<-c("left","right","qty")
 
-			# interval<- cbind(interval, qty=c(rep(1,nrow(interval))))
-		} else{
+				# interval<- cbind(interval, qty=c(rep(1,nrow(interval))))
+			} else{
 ## here is the place to process true_intervals (as interval) for duplicate entries
-			intervals<-interval
+				intervals<-interval
 ## sort to facilitate to assure uniform presentation and consolidation of any duplicated entries
 ##  only required for dataframe with qty field
-			NDX<-order(intervals$left,intervals$right)
-			intervals<-intervals[NDX,]
+				NDX<-order(intervals$left,intervals$right)
+				intervals<-intervals[NDX,]
 
-			interval_test<-paste(as.character(intervals$left), as.character(intervals$right))
-			if(length(unique(interval_test)) < length(interval_test))  {
-				drop_rows<-NULL
-				for(frow in nrow(intervals): 2)  {
-					if((intervals[frow,1] == intervals[frow-1,1])  && (intervals[frow,2] == intervals[frow-1,2])) {
-						drop_rows<-c(drop_rows, frow)
-						intervals[frow-1,3] <- intervals[frow-1,3] + intervals[frow,3]
+				interval_test<-paste(as.character(intervals$left), as.character(intervals$right))
+				if(length(unique(interval_test)) < length(interval_test))  {
+					drop_rows<-NULL
+					for(frow in nrow(intervals): 2)  {
+						if((intervals[frow,1] == intervals[frow-1,1])  && (intervals[frow,2] == intervals[frow-1,2])) {
+							drop_rows<-c(drop_rows, frow)
+							intervals[frow-1,3] <- intervals[frow-1,3] + intervals[frow,3]
+						}
 					}
+					intervals<-intervals[-drop_rows,]
 				}
-				intervals<-intervals[-drop_rows,]
 			}
+		}else{
+## this completes the test that no true_intervals were found, setting output intervals to NULL
+			intervals<-NULL
 		}
-		} # close the test for interval is null, because there were no true_intervals
 
-## finally, reject any other object type but NULL
+## finally, reject any object type that is not dataframe (we are within a test for !is.null)
 	}else{
-		if(!is.null(interval))  {
+		#if(!is.null(interval))  {
 			stop("error in interval argument type")
-		}
+		#}
 	}
 
 
