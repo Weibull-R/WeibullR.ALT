@@ -225,8 +225,11 @@ if(!is.null(interval)) {
 			}
 		}
 
+## initialize possible interval categories			
+		fail_intervals<-NULL	
+		susp_intervals<-NULL	
+		true_intervals<-interval[which(interval$right-interval$left>0),]	
 		if(any((interval$right-interval$left)<=0))  {
-			true_intervals<-interval[which(interval$right-interval$left>0),]
 			fail_intervals<-interval[which(interval$right==interval$left),]
 			susp_intervals<-interval[which(interval$right-interval$left<0),]		
 			if(any(susp_intervals$right>0)) {	
