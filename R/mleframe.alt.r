@@ -307,24 +307,28 @@ if(!is.null(interval)) {
 ## this code will rarely ever be called
 ## add qty column if not provided
 		if(ncol(fail_intervals)<3)  {
-			ivalchar<- apply(fail_intervals,2,as.character)
-			ivalstr<-paste0(ivalchar[,1],"_",ivalchar[,2])
-			ivaldf<-as.data.frame(table(ivalstr))
-			ivalstr2<-as.character(levels(ivaldf[,1]))
-## much done here, but this returns the tabled left and right columns
-## in a dataframe with rows corresponding to the tabled quantities
-			lrdf<-data.frame(
-				matrix(
-					as.numeric(
-						unlist(
-							strsplit(ivalstr2,"_")
-						)
-					)
-				,ncol=2, byrow=T
-				)
-			)
-			fail_intervals<-cbind(lrdf,ivaldf[,2])
-			names(fail_intervals)<-c("left","right","qty")
+			if(nrow(fail_intervals)>1)  {						
+				ivalchar<- apply(fail_intervals,2,as.character)					
+				 ivalstr<-paste0(ivalchar[,1],"_",ivalchar[,2])					
+				ivaldf<-as.data.frame(table(ivalstr))					
+				ivalstr2<-as.character(levels(ivaldf[,1]))					
+## much done here, but this returns the tabled left and right columns									
+## in a dataframe with rows corresponding to the tabled quantities									
+				lrdf<-data.frame(					
+					matrix(				
+						as.numeric(			
+							unlist(		
+								strsplit(ivalstr2,"_")	
+							)		
+						)			
+					,ncol=2, byrow=T				
+					)				
+				)					
+				fail_intervals<-cbind(lrdf,ivaldf[,2])					
+				names(fail_intervals)<-c("left","right","qty")					
+			}else{						
+				fail_intervals<-cbind(fail_intervals, qty=1)					
+			}
 		}
 
 		## actually rets$failures could be NULL and ignored by rbind
@@ -357,24 +361,29 @@ if(!is.null(interval)) {
 ## this code will rarely ever be called
 ## add qty column if not provided
 		if(ncol(susp_intervals)<3)  {
-			ivalchar<- apply(susp_intervals,2,as.character)
-			ivalstr<-paste0(ivalchar[,1],"_",ivalchar[,2])
-			ivaldf<-as.data.frame(table(ivalstr))
-			ivalstr2<-as.character(levels(ivaldf[,1]))
-## much done here, but this returns the tabled left and right columns
-## in a dataframe with rows corresponding to the tabled quantities
-			lrdf<-data.frame(
-				matrix(
-					as.numeric(
-						unlist(
-							strsplit(ivalstr2,"_")
-						)
-					)
-				,ncol=2, byrow=T
-				)
-			)
-			susp_intervals<-cbind(lrdf,ivaldf[,2])
-			names(susp_intervals)<-c("left","right","qty")
+			if(nrow(susp_intervals)>1)  {					
+				ivalchar<- apply(susp_intervals,2,as.character)				
+				ivalstr<-paste0(ivalchar[,1],"_",ivalchar[,2])				
+				ivaldf<-as.data.frame(table(ivalstr))				
+				ivalstr2<-as.character(levels(ivaldf[,1]))				
+## much done here, but this returns the tabled left and right columns								
+## in a dataframe with rows corresponding to the tabled quantities								
+				lrdf<-data.frame(				
+					matrix(			
+						as.numeric(		
+							unlist(	
+								strsplit(ivalstr2,"_")
+							)	
+						)		
+					,ncol=2, byrow=T			
+					)			
+				)				
+				susp_intervals<-cbind(lrdf,ivaldf[,2])				
+				names(susp_intervals)<-c("left","right","qty")				
+			}else{					
+				susp_intervals<-cbind(susp_intervals, qty=1)				
+			}					
+
 		}
 
 			## actually rets$suspensions could be NULL and will be ignored by rbind
