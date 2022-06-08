@@ -245,30 +245,31 @@ if(!is.null(interval)) {
 ## Now procede with original interval handler code
 ## add qty column if not provided
 			if(ncol(interval)<3)  {
-
-				ivalchar<- apply(interval,2,as.character)
-				ivalstr<-paste0(ivalchar[,1],"_",ivalchar[,2])
-				ivaldf<-as.data.frame(table(ivalstr))
-				ivalstr2<-as.character(levels(ivaldf[,1]))
-## much done here, but this returns the tabled left and right columns
-## in a dataframe with rows corresponding to the tabled quantities
-				lrdf<-data.frame(
-					matrix(
-						as.numeric(
-							unlist(
-								strsplit(ivalstr2,"_")
-							)
-						)
-					,ncol=2, byrow=T
-					)
-				)
+				if(nrow(interval)>1)  {					
+					ivalchar<- apply(interval,2,as.character)				
+					ivalstr<-paste0(ivalchar[,1],"_",ivalchar[,2])				
+					ivaldf<-as.data.frame(table(ivalstr))				
+					ivalstr2<-as.character(levels(ivaldf[,1]))				
+## much done here, but this returns the tabled left and right columns								
+## in a dataframe with rows corresponding to the tabled quantities								
+					lrdf<-data.frame(				
+						matrix(			
+							as.numeric(		
+								unlist(	
+									strsplit(ivalstr2,"_")
+								)	
+							)		
+						,ncol=2, byrow=T			
+						)			
+					)				
+					intervals<-cbind(lrdf,ivaldf[,2])				
+					names(intervals)<-c("left","right","qty")				
+				}else{					
+					intervals<-cbind(interval, qty=1)				
+				}
+				
+			}else{
 ## now just complete the consolidation of duplicates in the interval dataframe
-				intervals<-cbind(lrdf,ivaldf[,2])
-				names(intervals)<-c("left","right","qty")
-
-				# interval<- cbind(interval, qty=c(rep(1,nrow(interval))))
-			} else{
-## here is the place to process true_intervals (as interval) for duplicate entries
 				intervals<-interval
 ## sort to facilitate to assure uniform presentation and consolidation of any duplicated entries
 ##  only required for dataframe with qty field
