@@ -77,7 +77,7 @@ plot.alt <- function(x,...){
 	 plotargs <- c(list(x=NA,axes=FALSE),					
 		list(xlim=xlim, ylim=ylim, log=log, 				
 		xlab=opa$xlab, ylab=opa$ylab, main=main))
-	if(opa$plot.in.Rmarkdown==FALSE) {
+	if(opa$suppress.dev.new==FALSE) {
 		dev.new(width=opa$dev.width, height=opa$dev.height)
 	}
 	do.call(plot.default,plotargs)					
