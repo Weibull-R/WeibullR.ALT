@@ -16,7 +16,7 @@ S3method(plot, alt)
   importFrom("grDevices", "dev.new")
   importFrom("graphics", "abline", "axis", "legend", "plot.default",
              "points")
-  importFrom("stats", "lm", "qlnorm", "qweibull")
+  importFrom("stats", "lm", "qlnorm", "qweibull", "na.omit")
   importFrom("utils", "modifyList")
 
   importFrom("WeibullR","getPPP", "lslr", "mlefit", "mleframe", "p2y",

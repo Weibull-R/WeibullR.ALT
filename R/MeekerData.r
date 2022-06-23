@@ -64,8 +64,18 @@ qty=c( 30, 1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  90, 1,  1,  1,  1,  1,  1,  1
 TempC=c( 10, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80))
 ret		
 }		
+
+# Table C.13 Minutes to Failure of Mylar-Polyurethane Laminated DC HV Insulating Structure
+# This data is exampled by Meeker on pages 504-507. It is also discussed in earlier chapters.
 			
-			
+generateTable_C.13<-function() {			
+ret<-list(			
+kV_mm361.4=c(   0.1,    0.33,   0.5,    0.5,    0.9,    1,  1.55,   1.65,   2.1,    4),
+kV_mm219.0=c(   15, 16, 36, 50, 55, 95, 122,    129,    625,    700),
+kV_mm157.1=c(   49, 99, 154.5,  180,    291,    447,    510,    600,    1656,   1721),
+kV_mm122.4=c(   188,    297,    405,    744,    1218,   1340,   1715,   3382),
+kV_mm100.3=c(   606,    1012,   2520,   2610,   3988,   4100,   5025,   6842))			
+ret}			
 			
 generateTable_C.15<-function() {			
 ret<-data.frame(			

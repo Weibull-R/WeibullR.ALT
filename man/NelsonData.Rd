@@ -24,7 +24,7 @@
  which prevented lazyData=yes to be in the package definition.  Without lazyData I could never seem
  to make data files avialable to example scripts within the package.
  
- Table 2.2 is presented on page115 of Wayne Nelson's book "Accelerated Testing".
+ Table 2.1 is presented on page115 of Wayne Nelson's book "Accelerated Testing".
  It purports to represent a series tests on  a Class H insulation at elevated temperatures (in deg C)
  
  Table 3.1 is presented on page129 of Wayne Nelson's book "Accelerated Testing".

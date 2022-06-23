@@ -43,7 +43,7 @@ ret
 }
 
 
-# Table 2.2 is presented on page115 of Wayne Nelson's book "Accelerated Testing".
+# Table 2.1 is presented on page115 of Wayne Nelson's book "Accelerated Testing".
 # It purports to represent a series tests on  a Class H insulation at elevated temperatures (in deg c)
 generate_table2.1<-function() {	
 	C190<-c( 7228,   7228,   7228,   8448,   9167,   9167,   9167,   9167,   10511,  10511) 
