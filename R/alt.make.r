@@ -10,7 +10,7 @@ alt.make<-function(x, dist, alt.model, method.fit="mle-rba", goal=NULL, set_vali
 	# x must be a list of alt.data objects		
 	for(da in 1:length(x) )  {		
 		#if(class(x[[da]])!="alt.data") stop("x is not a list of alt.data objects")	
-		if(!is(x[[da]], "alt.data") stop("x is not a list of alt.data objects") 
+		if(!is(x[[da]], "alt.data")) stop("x is not a list of alt.data objects") 
 	}		
 	obj$data<-x		
 			
@@ -25,7 +25,7 @@ alt.make<-function(x, dist, alt.model, method.fit="mle-rba", goal=NULL, set_vali
 	## if goal is not NULL it must be of class "alt.data"		
 	if(! is.null(goal))  {		
 		#if(!class(goal)=="alt.data") stop("goal must be provided as an alt.data object")
-		if(!is(goal, "alt.data") stop("goal must be provided as an alt.data object")
+		if(!is(goal, "alt.data")) stop("goal must be provided as an alt.data object")
 		obj$goal<-goal	
 	}		
 
@@ -88,7 +88,7 @@ if(valid_sets<2) warning("insufficient data for accelerated life relationship")
 view_dist_fits<-function(x)  {								
 	# must confirm x is an alt object							
 	#if(class(x)!="alt") stop("x is not an alt object")
-	if(!is(x, "alt") stop("x is not an alt object")
+	if(!is(x, "alt")) stop("x is not an alt object")
 								
 	wblr_list<-list()							
 	colors<-c("blue", "darkgreen", "red", "purple", "darkseagreen", "chocolate",  "lightblue4", "indianred")							

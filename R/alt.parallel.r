@@ -1,7 +1,7 @@
 alt.parallel<-function(x, ignore_slope=0, set.exponential=FALSE, view_parallel_fits=TRUE)  {
 	# must confirm x is an alt object
 	#if(class(x)!="alt") stop("x is not an alt object")
-	if(!is(x, "alt") stop("x is not an alt object")
+	if(!is(x, "alt")) stop("x is not an alt object")
 	# set.exponential only applies when distribution is set to weibull
 	if(set.exponential==TRUE && x$dist!="weibull") stop("exponential fitting requires weibull distribution")
 

@@ -1,7 +1,7 @@
 alt.fit<-function(x, omit_set=0)  {			
 	# must confirm x is an alt object		
 	#if(class(x)!="alt") stop("x is not an alt object")	
-	if(!is(x, "alt") stop("x is not an alt object")	
+	if(!is(x, "alt")) stop("x is not an alt object")	
 	# object x must include a parallel_par element		
 	if(is.null(x$parallel_par)) stop("x must include a parallel_par element")		
 	modelDF<-x$parallel_par	
